@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AURA — Redefine Sound</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --black: #000000;
+      --light-gray: #f5f5f7;
+      --near-black: #1d1d1f;
+      --apple-blue: #0071e3;
+      --white: #ffffff;
+      --body-text: rgba(0, 0, 0, 0.8);
+      --tertiary: rgba(0, 0, 0, 0.48);
+      --card-dark: #272729;
+      --shadow: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      color: var(--near-black);
+      background: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ===== NAVIGATION ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: 48px;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: saturate(180%) blur(20px);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s;
+    }
+
+    .nav-inner {
+      max-width: 1024px;
+      width: 100%;
+      padding: 0 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      letter-spacing: -0.5px;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: color 0.2s;
+      font-weight: 400;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+
+    .nav-cta {
+      font-size: 12px;
+      color: var(--white);
+      background: var(--apple-blue);
+      padding: 6px 14px;
+      border-radius: 980px;
+      text-decoration: none;
+      font-weight: 400;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      min-height: 100vh;
+      background: var(--black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 120px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-badge {
+      font-size: 14px;
+      color: var(--apple-blue);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.2s;
+    }
+
+    .hero h1 {
+      font-size: clamp(40px, 8vw, 80px);
+      font-weight: 600;
+      line-height: 1.07;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      max-width: 800px;
+      margin-bottom: 16px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.4s;
+    }
+
+    .hero-sub {
+      font-size: clamp(18px, 3vw, 28px");
+      font-weight: 400;
+      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.6);
+      max-width: 600px;
+      margin-bottom: 32px;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.6s;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.8s;
+    }
+
+    .btn-primary {
+      display: inline-block;
+      padding: 12px 24px;
+      background: var(--apple-blue);
+      color: var(--white);
+      font-size: 17px;
+      font-weight: 400;
+      border-radius: 980px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover { background: #0077ed; }
+
+    .btn-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 20px;
+      background: transparent;
+      color: #2997ff;
+      font-size: 17px;
+      font-weight: 400;
+      border-radius: 980px;
+      text-decoration: none;
+      border: 1px solid #2997ff;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-link:hover {
+      background: rgba(41, 151, 255, 0.1);
+    }
+
+    .btn-link .arrow { font-size: 14px; transition: transform 0.2s; }
+    .btn-link:hover .arrow { transform: translateX(3px); }
+
+    .hero-product {
+      margin-top: 60px;
+      width: 100%;
+      max-width: 700px;
+      position: relative;
+      opacity: 0;
+      animation: fadeUp 1s ease forwards 1s;
+    }
+
+    .hero-product-img {
+      width: 100%;
+      height: 400px;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-product-img::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(0, 113, 227, 0.3) 0%, transparent 70%);
+      border-radius: 50%;
+      top: 30%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .product-visual {
+      width: 180px;
+      height: 240px;
+      background: linear-gradient(145deg, #2a2a3e, #1a1a2e);
+      border-radius: 30px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .product-visual::before {
+      content: '';
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0071e3, #00d4aa);
+      box-shadow: 0 0 40px rgba(0, 113, 227, 0.4);
+    }
+
+    .product-visual::after {
+      content: 'AURA';
+      position: absolute;
+      bottom: -40px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 3px;
+      font-weight: 600;
+    }
+
+    /* ===== SECTION: FEATURES GRID ===== */
+    .section-light {
+      background: var(--light-gray);
+      padding: 100px 24px;
+    }
+
+    .section-inner {
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--tertiary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+    }
+
+    .section-title {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 600;
+      line-height: 1.07;
+      letter-spacing: -0.02em;
+      color: var(--near-black);
+      margin-bottom: 60px;
+      text-align: center;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 40px 32px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .feature-icon.blue { background: rgba(0, 113, 227, 0.1); color: var(--apple-blue); }
+    .feature-icon.teal { background: rgba(0, 212, 170, 0.1); color: #00d4aa; }
+    .feature-icon.purple { background: rgba(175, 82, 222, 0.1); color: #af52de; }
+
+    .feature-card h3 {
+      font-size: 21px;
+      font-weight: 700;
+      line-height: 1.19;
+      letter-spacing: 0.01em;
+      color: var(--near-black);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 15px;
+      line-height: 1.5;
+      color: var(--tertiary);
+    }
+
+    /* ===== SECTION: PRODUCT SHOWCASE ===== */
+    .section-dark {
+      background: var(--black);
+      padding: 120px 24px;
+      text-align: center;
+    }
+
+    .section-dark .section-label { color: rgba(255, 255, 255, 0.4); }
+    .section-dark .section-title { color: var(--white); }
+
+    .showcase-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 60px;
+    }
+
+    .showcase-card {
+      background: var(--card-dark);
+      border-radius: 18px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .showcase-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow);
+    }
+
+    .showcase-img {
+      height: 280px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .showcase-img.speaker {
+      background: linear-gradient(135deg, #1a1a2e, #0d1b2a);
+    }
+
+    .showcase-img.watch {
+      background: linear-gradient(135deg, #1a1a2e, #162447);
+    }
+
+    .showcase-img.earbuds {
+      background: linear-gradient(135deg, #0f0f23, #1a1a3e);
+    }
+
+    .showcase-obj {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      position: relative;
+      z-index: 2;
+    }
+
+    .showcase-obj.speaker-obj {
+      width: 120px;
+      height: 120px;
+      border-radius: 24px;
+      background: linear-gradient(145deg, #333355, #222244);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .showcase-obj.watch-obj {
+      width: 80px;
+      height: 96px;
+      border-radius: 20px;
+      background: linear-gradient(145deg, #2a2a4a, #1a1a3a);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      position: relative;
+    }
+
+    .showcase-obj.watch-obj::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #0071e3, #00d4aa);
+    }
+
+    .showcase-obj.earbuds-obj {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #333355, #222244);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4),
+                  inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .showcase-obj.earbuds-obj::before {
+      content: '';
+      position: absolute;
+      top: -15px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #333355, #222244);
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .showcase-info {
+      padding: 28px 24px;
+      text-align: left;
+    }
+
+    .showcase-info h3 {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+
+    .showcase-info .desc {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 16px;
+      line-height: 1.4;
+    }
+
+    .showcase-info .price {
+      font-size: 15px;
+      color: var(--white);
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .showcase-info .actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .showcase-info .btn-small {
+      padding: 8px 16px;
+      font-size: 14px;
+      border-radius: 980px;
+      text-decoration: none;
+      font-weight: 400;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .showcase-info .btn-buy {
+      background: var(--apple-blue);
+      color: var(--white);
+      border: none;
+    }
+
+    .showcase-info .btn-buy:hover { background: #0077ed; }
+
+    .showcase-info .btn-more {
+      background: transparent;
+      color: #2997ff;
+      border: 1px solid #2997ff;
+    }
+
+    .showcase-info .btn-more:hover { background: rgba(41, 151, 255, 0.1); }
+
+    /* ===== SECTION: SPECS ===== */
+    .specs-section {
+      background: var(--light-gray);
+      padding: 100px 24px;
+    }
+
+    .specs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      max-width: 1024px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .spec-item h4 {
+      font-size: 48px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.1;
+      color: var(--near-black);
+      margin-bottom: 8px;
+    }
+
+    .spec-item h4 span {
+      font-size: 24px;
+      font-weight: 400;
+      color: var(--tertiary);
+    }
+
+    .spec-item p {
+      font-size: 14px;
+      color: var(--tertiary);
+      line-height: 1.4;
+    }
+
+    /* ===== SECTION: CTA BANNER ===== */
+    .cta-banner {
+      background: var(--black);
+      padding: 120px 24px;
+      text-align: center;
+    }
+
+    .cta-banner h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: 600;
+      line-height: 1.07;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+
+    .cta-banner p {
+      font-size: 21px;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 32px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--light-gray);
+      padding: 40px 24px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .footer-inner {
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 32px;
+      margin-bottom: 32px;
+    }
+
+    .footer-col h5 {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--near-black);
+      margin-bottom: 12px;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col li { margin-bottom: 8px; }
+
+    .footer-col a {
+      font-size: 12px;
+      color: var(--tertiary);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-col a:hover { color: var(--near-black); }
+
+    .footer-bottom {
+      padding-top: 20px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .footer-bottom p {
+      font-size: 12px;
+      color: var(--tertiary);
+    }
+
+    .footer-bottom-links {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-bottom-links a {
+      font-size: 12px;
+      color: var(--tertiary);
+      text-decoration: none;
+      border-right: 1px solid rgba(0, 0, 0, 0.15);
+      padding-right: 16px;
+    }
+
+    .footer-bottom-links a:last-child { border-right: none; }
+    .footer-bottom-links a:hover { color: var(--near-black); }
+
+    /* ===== ANIMATIONS ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+
+      .hero { padding: 100px 20px 60px; }
+
+      .hero-product-img { height: 280px; }
+
+      .product-visual {
+        width: 120px;
+        height: 160px;
+        border-radius: 20px;
+      }
+
+      .section-light, .section-dark, .specs-section, .cta-banner {
+        padding: 70px 20px;
+      }
+
+      .feature-grid { grid-template-columns: 1fr; }
+
+      .showcase-row { grid-template-columns: 1fr; }
+
+      .specs-grid { grid-template-columns: repeat(2, 1fr); gap: 30px; }
+
+      .spec-item h4 { font-size: 36px; }
+
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+
+      .footer-bottom { flex-direction: column; }
+    }
+
+    @media (max-width: 480px) {
+      .specs-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">AURA</a>
+      <ul class="nav-links">
+        <li><a href="#products">Products</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#specs">Specs</a></li>
+        <li><a href="#support">Support</a></li>
+      </ul>
+      <a href="#" class="nav-cta">Buy</a>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <p class="hero-badge">Introducing</p>
+    <h1>Aura Pro.</h1>
+    <p class="hero-sub">Sound, sculpted to perfection.</p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary">Buy — $599</a>
+      <a href="#products" class="btn-link">Learn more <span class="arrow">›</span></a>
+    </div>
+    <div class="hero-product">
+      <div class="hero-product-img">
+        <div class="product-visual"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section-light" id="features">
+    <div class="section-inner">
+      <p class="section-label">Why Aura</p>
+      <h2 class="section-title fade-in">Engineered for the<br>way you listen.</h2>
+      <div class="feature-grid">
+        <div class="feature-card fade-in">
+          <div class="feature-icon blue">◎</div>
+          <h3>Adaptive Sound</h3>
+          <p>AI-powered audio that adapts to your environment in real time. From quiet rooms to busy streets.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon teal">◈</div>
+          <h3>48-Hour Battery</h3>
+          <p>All-week battery life with quick charge. 5 minutes in gives you 2 hours of playback.</p>
+        </div>
+        <div class="feature-card fade-in">
+          <div class="feature-icon purple">✦</div>
+          <h3>Spatial Audio</h3>
+          <p>Head-tracking Dolby Atmos delivers sound from every direction. You're inside the music.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Product Showcase -->
+  <section class="section-dark" id="products">
+    <div class="section-inner">
+      <p class="section-label">The Collection</p>
+      <h2 class="section-title fade-in">Find your Aura.</h2>
+      <div class="showcase-row">
+        <!-- Speaker -->
+        <div class="showcase-card fade-in">
+          <div class="showcase-img speaker">
+            <div class="showcase-obj speaker-obj"></div>
+          </div>
+          <div class="showcase-info">
+            <h3>Aura Speaker</h3>
+            <p class="desc">Room-filling sound in a compact design.</p>
+            <p class="price">From $349</p>
+            <div class="actions">
+              <button class="btn-small btn-buy">Buy</button>
+              <button class="btn-small btn-more">Learn more</button>
+            </div>
+          </div>
+        </div>
+        <!-- Watch -->
+        <div class="showcase-card fade-in">
+          <div class="showcase-img watch">
+            <div class="showcase-obj watch-obj"></div>
+          </div>
+          <div class="showcase-info">
+            <h3>Aura Watch</h3>
+            <p class="desc">Health, fitness, and music — on your wrist.</p>
+            <p class="price">From $399</p>
+            <div class="actions">
+              <button class="btn-small btn-buy">Buy</button>
+              <button class="btn-small btn-more">Learn more</button>
+            </div>
+          </div>
+        </div>
+        <!-- Earbuds -->
+        <div class="showcase-card fade-in">
+          <div class="showcase-img earbuds">
+            <div class="showcase-obj earbuds-obj"></div>
+          </div>
+          <div class="showcase-info">
+            <h3>Aura Buds</h3>
+            <p class="desc">Immersive sound. Effortless connection.</p>
+            <p class="price">From $199</p>
+            <div class="actions">
+              <button class="btn-small btn-buy">Buy</button>
+              <button class="btn-small btn-more">Learn more</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Specs -->
+  <section class="specs-section" id="specs">
+    <div class="section-inner">
+      <p class="section-label" style="text-align:center;">By the numbers</p>
+      <h2 class="section-title fade-in" style="margin-bottom:60px;">Built different.</h2>
+      <div class="specs-grid fade-in">
+        <div class="spec-item">
+          <h4>48<span>h</span></h4>
+          <p>Battery life<br>on a single charge</p>
+        </div>
+        <div class="spec-item">
+          <h4>-45<span>dB</span></h4>
+          <p>Noise cancellation<br>depth</p>
+        </div>
+        <div class="spec-item">
+          <h4>12<span>mm</span></h4>
+          <p>Custom drivers<br>for rich bass</p>
+        </div>
+        <div class="spec-item">
+          <h4>5<span>min</span></h4>
+          <p>Quick charge<br>= 2 hours play</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Banner -->
+  <section class="cta-banner">
+    <h2 class="fade-in">Ready to hear<br>the difference?</h2>
+    <p class="fade-in">Free shipping. 14-day returns. No questions asked.</p>
+    <div class="fade-in">
+      <a href="#" class="btn-primary">Shop the Collection</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-col">
+          <h5>Products</h5>
+          <ul>
+            <li><a href="#">Aura Speaker</a></li>
+            <li><a href="#">Aura Watch</a></li>
+            <li><a href="#">Aura Buds</a></li>
+            <li><a href="#">Accessories</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Support</h5>
+          <ul>
+            <li><a href="#">Contact Us</a></li>
+            <li><a href="#">FAQs</a></li>
+            <li><a href="#">Warranty</a></li>
+            <li><a href="#">Repairs</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Press</a></li>
+            <li><a href="#">Blog</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h5>Legal</h5>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Cookies</a></li>
+            <li><a href="#">Licenses</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>Copyright © 2025 Aura Inc. All rights reserved.</p>
+        <div class="footer-bottom-links">
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Use</a>
+          <a href="#">Sales and Refunds</a>
+          <a href="#">Sitemap</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Intersection Observer for fade-in animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
